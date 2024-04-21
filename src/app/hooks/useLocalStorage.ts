@@ -28,6 +28,7 @@ const useLocalStorage = () => {
 
     if (!Array.isArray(_values)) {
       console.error("Failed: not an array");
+      return null;
     }
 
     _values.push(value);
@@ -43,6 +44,11 @@ const useLocalStorage = () => {
     }
 
     const _values = JSON.parse(localStorage.getItem(key) ?? "[]");
+
+    if (!Array.isArray(_values)) {
+      console.error("Failed: not an array");
+      return null;
+    }
 
     if (_values.length === 0) {
       console.error("Array is empty");
