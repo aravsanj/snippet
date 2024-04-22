@@ -29,14 +29,14 @@ interface Option {
 
 const Editor = ({ id }: Props) => {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState<readonly Option[]>([]);
-  const [inputValue, setInputValue] = useState("");
-
   const isNew = id === undefined;
 
   const { pushNote, pickNote, updateNote } = useNotes();
 
   const note = isNew ? null : pickNote(id);
+
+  const [value, setValue] = useState<readonly Option[]>(isNew ? [] : note.tags);
+  const [inputValue, setInputValue] = useState("");
 
   const refs = {
     titleRef: useRef<HTMLInputElement>(null),
@@ -55,6 +55,7 @@ const Editor = ({ id }: Props) => {
         id: uuidv4(),
         title: titleRef?.current?.value,
         content: contentRef?.current?.value,
+        tags: value,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       });
@@ -63,6 +64,7 @@ const Editor = ({ id }: Props) => {
         ...note,
         title: titleRef?.current?.value,
         content: contentRef?.current?.value,
+        tags: value,
         updatedAt: Date.now(),
       });
     }

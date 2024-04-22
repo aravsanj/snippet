@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { DeleteAlert } from "./DeleteAlert";
+import { Badge } from "@/components/ui/badge";
 import Editor from "../Editor/Editor";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -17,7 +18,7 @@ type Props = {
 };
 
 const SingleNote = ({ note }: Props) => {
-  const { id, title, content, createdAt } = note;
+  const { id, title, content, tags, createdAt } = note;
 
   const date = dayjs(createdAt).format("MMMM D, YYYY");
 
@@ -31,7 +32,13 @@ const SingleNote = ({ note }: Props) => {
         <CardContent className="h-[200px]">
           <span className="line-clamp-6">{content}</span>
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-between items-center">
+          <div className="space-x-2">
+            {tags &&
+              tags.map((tag: any) => (
+                <Badge key={tag.label}>{tag.value}</Badge>
+              ))}
+          </div>
           <DeleteAlert id={id} />
           <Editor id={id} />
         </CardFooter>
