@@ -16,13 +16,22 @@ import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import { NotebookPen, Pencil } from "lucide-react";
 import useNotes from "@/app/hooks/useNotes";
+import CreatableSelect from "react-select";
+import MultiSelect from "../Select/MultiSelect";
 
 type Props = {
   id?: string;
 };
+interface Option {
+  readonly label: string;
+  readonly value: string;
+}
 
 const Editor = ({ id }: Props) => {
   const [open, setOpen] = useState(false);
+  const [value, setValue] = useState<readonly Option[]>([]);
+  const [inputValue, setInputValue] = useState("");
+
   const isNew = id === undefined;
 
   const { pushNote, pickNote, updateNote } = useNotes();
@@ -31,13 +40,13 @@ const Editor = ({ id }: Props) => {
 
   const refs = {
     titleRef: useRef<HTMLInputElement>(null),
-    noteRef: useRef<HTMLTextAreaElement>(null),
+    contentRef: useRef<HTMLTextAreaElement>(null),
   };
 
-  const { titleRef, noteRef } = refs;
+  const { titleRef, contentRef } = refs;
 
   const handleClick = () => {
-    if (!titleRef?.current?.value || !noteRef?.current?.value) {
+    if (!titleRef?.current?.value || !contentRef?.current?.value) {
       return;
     }
 
@@ -45,7 +54,7 @@ const Editor = ({ id }: Props) => {
       pushNote({
         id: uuidv4(),
         title: titleRef?.current?.value,
-        content: noteRef?.current?.value,
+        content: contentRef?.current?.value,
         createdAt: Date.now(),
         updatedAt: Date.now(),
       });
@@ -53,7 +62,7 @@ const Editor = ({ id }: Props) => {
       updateNote(id, {
         ...note,
         title: titleRef?.current?.value,
-        content: noteRef?.current?.value,
+        content: contentRef?.current?.value,
         updatedAt: Date.now(),
       });
     }
@@ -93,10 +102,17 @@ const Editor = ({ id }: Props) => {
                 placeholder="Enter your title"
               />
               <Textarea
-                ref={noteRef}
+                ref={contentRef}
                 defaultValue={note?.content}
                 rows={10}
                 placeholder="Enter your content"
+              />
+
+              <MultiSelect
+                value={value}
+                setValue={setValue}
+                inputValue={inputValue}
+                setInputValue={setInputValue}
               />
             </div>
           </DialogDescription>
