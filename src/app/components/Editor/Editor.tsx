@@ -14,12 +14,20 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useRef } from "react";
-import { NotebookPen } from "lucide-react";
+import { NotebookPen, Pencil } from "lucide-react";
+import useNotes from "@/app/hooks/useNotes";
 
-type Props = {};
+type Props = {
+  id?: string;
+};
 
-const Editor = (props: Props) => {
+const Editor = ({ id }: Props) => {
   const [open, setOpen] = useState(false);
+  const isNew = id === undefined;
+
+  const { pushNote, pickNote, updateNote } = useNotes();
+
+  const note = isNew ? null : pickNote(id);
 
   const refs = {
     titleRef: useRef<HTMLInputElement>(null),
@@ -33,36 +41,60 @@ const Editor = (props: Props) => {
       return;
     }
 
-    const notes = JSON.parse(localStorage.getItem("notes") ?? "[]");
+    if (isNew) {
+      pushNote({
+        id: uuidv4(),
+        title: titleRef?.current?.value,
+        content: noteRef?.current?.value,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+      });
+    } else {
+      updateNote(id, {
+        ...note,
+        title: titleRef?.current?.value,
+        content: noteRef?.current?.value,
+        updatedAt: Date.now(),
+      });
+    }
 
-    notes.push({
-      id: uuidv4(),
-      title: titleRef?.current?.value,
-      note: noteRef?.current?.value,
-      createdAt: Date.now(),
-    });
-
-    localStorage.setItem("notes", JSON.stringify(notes));
     setOpen(false);
   };
 
   return (
     <Dialog open={open} onOpenChange={() => setOpen((open) => !open)}>
       <DialogTrigger>
-        <div className="absolute bottom-4 right-4">
-          <Button className="flex gap-x-2">
-            <NotebookPen className="h-4 w-4" /> New
-          </Button>
-        </div>
+        {isNew ? (
+          <div className="flex items-center gap-x-1 rounded-md bg-black text-white p-2  absolute bottom-4 right-4">
+            <span className="flex items-center px-2 gap-x-2">
+              <NotebookPen className="h-4 w-4" />
+              <span className="text-sm">New</span>
+            </span>
+          </div>
+        ) : (
+          <div className=" bg-black text-white p-1 rounded-md  cursor-pointer opacity-80">
+            <span className="flex items-center px-2 gap-x-1">
+              <Pencil className="h-3 w-3" />{" "}
+              <span className="text-sm">Edit</span>
+            </span>
+          </div>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle className="mb-2">Create new note</DialogTitle>
+          <DialogTitle className="mb-2">
+            {isNew ? "Create new note" : "Edit note"}
+          </DialogTitle>
           <DialogDescription>
             <div className="flex flex-col gap-y-4">
-              <Input ref={titleRef} placeholder="Enter your title" />
+              <Input
+                defaultValue={note?.title}
+                ref={titleRef}
+                placeholder="Enter your title"
+              />
               <Textarea
                 ref={noteRef}
+                defaultValue={note?.content}
                 rows={10}
                 placeholder="Enter your content"
               />

@@ -62,11 +62,69 @@ const useLocalStorage = () => {
     return _afterPull;
   }
 
+  function update(key: string, id: string, value: unknown) {
+    if (!key || !id) {
+      return null;
+    }
+
+    const _values = JSON.parse(localStorage.getItem(key) ?? "[]");
+
+    if (!Array.isArray(_values)) {
+      console.error("Failed: not an array");
+      return null;
+    }
+
+    if (_values.length === 0) {
+      console.error("Array is empty");
+      return;
+    }
+
+    const _afterUpdate = _values.map((val: any) => {
+      if (val.id === id) {
+        return value;
+      }
+
+      return val;
+    });
+
+    set(key, _afterUpdate);
+
+    return _afterUpdate;
+  }
+
+  function pick(key: string, id: string) {
+    if (!key || !id) {
+      return null;
+    }
+
+    const _values = JSON.parse(localStorage.getItem(key) ?? "[]");
+
+    if (!Array.isArray(_values)) {
+      console.error("Failed: not an array");
+      return null;
+    }
+
+    if (_values.length === 0) {
+      console.error("Array is empty");
+      return;
+    }
+
+    const _pick = _values.find((val: any) => {
+      if (val.id === id) {
+        return val;
+      }
+    });
+
+    return _pick;
+  }
+
   return {
     get,
     set,
     push,
     pull,
+    update,
+    pick,
   };
 };
 

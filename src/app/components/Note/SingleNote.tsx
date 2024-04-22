@@ -6,20 +6,35 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { DeleteAlert } from "./DeleteAlert";
+import Editor from "../Editor/Editor";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
-type Props = {};
+type Props = {
+  note: any;
+};
 
-const SingleNote = ({ note }: any) => {
-  const { id, title, note: content, createdAt } = note;
+const SingleNote = ({ note }: Props) => {
+  const { id, title, content, createdAt } = note;
+
+  const date = dayjs(createdAt).format("MMMM D, YYYY");
+
   return (
     <>
-      <Card className="w-[350px] h-[200px]">
+      <Card className="relative w-[350px]">
         <CardHeader>
           <CardTitle>{title}</CardTitle>
-          <CardDescription>{content}</CardDescription>
+          <CardDescription>{date}</CardDescription>
         </CardHeader>
-        <CardContent></CardContent>
-        <CardFooter className="flex justify-between"></CardFooter>
+        <CardContent className="h-[200px]">
+          <span className="line-clamp-6">{content}</span>
+        </CardContent>
+        <CardFooter className="flex justify-between">
+          <DeleteAlert id={id} />
+          <Editor id={id} />
+        </CardFooter>
       </Card>
     </>
   );
