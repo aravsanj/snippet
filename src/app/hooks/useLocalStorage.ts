@@ -31,7 +31,7 @@ const useLocalStorage = () => {
       return null;
     }
 
-    _values.push(value);
+    _values.unshift(value);
 
     localStorage.setItem(key, JSON.stringify(_values));
 

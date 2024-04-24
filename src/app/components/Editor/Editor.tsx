@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import { NotebookPen, Pencil } from "lucide-react";
 import useNotes from "@/app/hooks/useNotes";
-import CreatableSelect from "react-select";
 import MultiSelect from "../Select/MultiSelect";
 
 type Props = {
@@ -76,7 +75,7 @@ const Editor = ({ id }: Props) => {
     <Dialog open={open} onOpenChange={() => setOpen((open) => !open)}>
       <DialogTrigger>
         {isNew ? (
-          <div className="flex items-center gap-x-1 rounded-md bg-black text-white p-2  absolute bottom-4 right-4">
+          <div className="flex items-center gap-x-1 rounded-md bg-black text-white p-2  fixed bottom-4 right-4">
             <span className="flex items-center px-2 gap-x-2">
               <NotebookPen className="h-4 w-4" />
               <span className="text-sm">New</span>
